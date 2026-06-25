@@ -323,11 +323,11 @@ export default function UploadPage() {
                   </div>
                 )}
 
-                {activeTask.parsedData.projects?.length > 0 && (
+                {(activeTask.parsedData.projects?.length ?? 0) > 0 && (
                   <div>
                     <label className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mb-3">📦 项目经验</label>
                     <div className="space-y-3">
-                      {activeTask.parsedData.projects.map((project, i) => (
+                      {(activeTask.parsedData.projects || []).map((project, i) => (
                         <div key={i} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-100">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-lg">📦</span>
