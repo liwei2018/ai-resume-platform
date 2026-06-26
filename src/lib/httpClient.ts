@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // 从环境变量中读取后端 API 根地址，若未配置则优雅兜底本地 8000 端口
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // 统一响应格式接口
 interface ApiResponse<T = any> {

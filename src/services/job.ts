@@ -1,8 +1,8 @@
 import { http } from '@/lib/httpClient';
 import { MatchScore } from '@/types/resume';
 
-// 从环境变量中读取后端 API 根地址
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+// 统一使用相对路径 /api，由 Next.js rewrites 转发到后端
+const BASE_URL = '/api';
 
 // 严格约束前端输入框的数据结构
 export interface JobDescriptionInput {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { candidateService } from '@/services/candidate';
 import { Candidate, CandidateStatus } from '@/types/resume';
 
@@ -119,9 +120,8 @@ export default function DashboardPage() {
           comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         case 'score':
-          // 假设从 matchScores 获取分数，这里简化处理
-          const scoreA = (a as any).matchScore?.totalScore || 0;
-          const scoreB = (b as any).matchScore?.totalScore || 0;
+          const scoreA = a.scores.length > 0 ? a.scores[a.scores.length - 1].totalScore : 0;
+          const scoreB = b.scores.length > 0 ? b.scores[b.scores.length - 1].totalScore : 0;
           comparison = scoreA - scoreB;
           break;
       }
@@ -157,6 +157,18 @@ export default function DashboardPage() {
       setCandidates(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
     } catch (err) {
       alert("数据库状态更新失败，请检查后端服务");
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`确定要删除候选人 "${name || '未命名'}" 吗？此操作不可恢复。`)) {
+      return;
+    }
+    try {
+      await candidateService.deleteCandidate(id);
+      setCandidates(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      alert("删除失败，请检查后端服务");
     }
   };
 
@@ -385,9 +397,10 @@ export default function DashboardPage() {
             {paginatedCandidates.map(candidate => {
               const statusInfo = statusConfig[candidate.status];
               return (
-                <div
+                <Link
                   key={candidate.id}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg hover:border-indigo-100 transition-all duration-300 group"
+                  href={`/candidates/${candidate.id}`}
+                  className="block bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg hover:border-indigo-100 transition-all duration-300 group"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -420,7 +433,7 @@ export default function DashboardPage() {
                   <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                     <select
                       value={candidate.status}
-                      onChange={(e) => handleStatusChange(candidate.id, e.target.value as CandidateStatus)}
+                      onChange={(e) => { e.stopPropagation(); handleStatusChange(candidate.id, e.target.value as CandidateStatus); }}
                       className="text-xs font-semibold px-2.5 py-1.5 bg-slate-50 rounded-lg border-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
                     >
                       {(Object.keys(statusConfig) as CandidateStatus[]).map(status => (
@@ -430,11 +443,20 @@ export default function DashboardPage() {
                       ))}
                     </select>
 
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {new Date(candidate.createdAt).toLocaleDateString('zh-CN')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDelete(candidate.id, candidate.name); }}
+                        className="text-[10px] px-2 py-1 rounded-md bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                        title="删除"
+                      >
+                        删除
+                      </button>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {new Date(candidate.createdAt).toLocaleDateString('zh-CN')}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -474,49 +496,64 @@ export default function DashboardPage() {
                   {paginatedCandidates.map(candidate => {
                     const statusInfo = statusConfig[candidate.status];
                     return (
-                      <tr key={candidate.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-4 py-3 text-sm font-medium text-slate-800">
-                          {candidate.name || '未命名'}
-                        </td>
-                        <td className="px-4 py-3 text-xs text-slate-500 font-mono">
-                          {candidate.email || '无'}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-wrap gap-1">
-                            {candidate.skills.slice(0, 3).map((skill, i) => (
-                              <span key={i} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
-                                {skill}
-                              </span>
-                            ))}
-                            {candidate.skills.length > 3 && (
-                              <span className="text-[10px] bg-slate-50 text-slate-400 px-2 py-0.5 rounded-full">
-                                +{candidate.skills.length - 3}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
-                            {statusInfo.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-slate-400 font-mono">
-                          {new Date(candidate.createdAt).toLocaleDateString('zh-CN')}
-                        </td>
-                        <td className="px-4 py-3">
-                          <select
-                            value={candidate.status}
-                            onChange={(e) => handleStatusChange(candidate.id, e.target.value as CandidateStatus)}
-                            className="text-xs font-semibold px-2.5 py-1.5 bg-slate-50 rounded-lg border-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                          >
-                            {(Object.keys(statusConfig) as CandidateStatus[]).map(status => (
-                              <option key={status} value={status} className="bg-white">
-                                {statusConfig[status].label}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                      </tr>
+                      <Link
+                        key={candidate.id}
+                        href={`/candidates/${candidate.id}`}
+                        className="block"
+                      >
+                        <tr className="hover:bg-slate-50 transition-colors">
+                          <td className="px-4 py-3 text-sm font-medium text-slate-800">
+                            {candidate.name || '未命名'}
+                          </td>
+                          <td className="px-4 py-3 text-xs text-slate-500 font-mono">
+                            {candidate.email || '无'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-wrap gap-1">
+                              {candidate.skills.slice(0, 3).map((skill, i) => (
+                                <span key={i} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                                  {skill}
+                                </span>
+                              ))}
+                              {candidate.skills.length > 3 && (
+                                <span className="text-[10px] bg-slate-50 text-slate-400 px-2 py-0.5 rounded-full">
+                                  +{candidate.skills.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                              {statusInfo.label}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-slate-400 font-mono">
+                            {new Date(candidate.createdAt).toLocaleDateString('zh-CN')}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={candidate.status}
+                                onChange={(e) => { e.stopPropagation(); handleStatusChange(candidate.id, e.target.value as CandidateStatus); }}
+                                className="text-xs font-semibold px-2.5 py-1.5 bg-slate-50 rounded-lg border-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                              >
+                                {(Object.keys(statusConfig) as CandidateStatus[]).map(status => (
+                                  <option key={status} value={status} className="bg-white">
+                                    {statusConfig[status].label}
+                                  </option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDelete(candidate.id, candidate.name); }}
+                                className="text-[10px] px-2 py-1 rounded-md bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                                title="删除"
+                              >
+                                删除
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </Link>
                     );
                   })}
                 </tbody>

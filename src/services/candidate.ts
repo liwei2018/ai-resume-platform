@@ -46,7 +46,20 @@ export const candidateService = {
    * @note 因为 SSE 需要走浏览器的原生 EventSource 对象，不走标准 Fetch 拦截，故在此暴露只读地址
    */
   getStreamUrl: (fileUrl: string) => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-    return `${baseUrl}/extract/stream?fileUrl=${encodeURIComponent(fileUrl)}`;
+    return `/api/extract/stream?fileUrl=${encodeURIComponent(fileUrl)}`;
+  },
+
+  /**
+   * 获取候选人详情
+   */
+  getCandidateById: (id: string) => {
+    return http.get<Candidate>(`/candidates/${id}`);
+  },
+
+  /**
+   * 删除候选人
+   */
+  deleteCandidate: (id: string) => {
+    return http.delete<{ success: boolean }>(`/candidates/${id}`);
   }
 };

@@ -31,12 +31,11 @@ export interface ResumeData {
 }
 
 export interface MatchScore {
+  id: string;
   totalScore: number;
-  subScores: {
-    skills: number;
-    experience: number;
-    education: number;
-  };
+  skillScore: number;
+  expScore: number;
+  eduScore: number;
   aiComment: string;
 }
 
@@ -45,9 +44,12 @@ export interface Candidate {
   name: string;
   email: string;
   phone: string;
+  city: string;
   status: CandidateStatus;
   skills: string[];
-  matchScore?: MatchScore;
-  createdAt: string;
   resumeUrl: string;
+  createdAt: string;
+  experiences: WorkExperience[];
+  educations: Education[];
+  scores: MatchScore[];
 }
