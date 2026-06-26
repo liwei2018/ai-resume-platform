@@ -397,16 +397,17 @@ export default function DashboardPage() {
             {paginatedCandidates.map(candidate => {
               const statusInfo = statusConfig[candidate.status];
               return (
-                <Link
+                <div
                   key={candidate.id}
-                  href={`/candidates/${candidate.id}`}
-                  className="block bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg hover:border-indigo-100 transition-all duration-300 group"
+                  className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg hover:border-indigo-100 transition-all duration-300"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
-                        {candidate.name || '未命名'}
-                      </h3>
+                      <Link href={`/candidates/${candidate.id}`}>
+                        <h3 className="text-base font-bold text-slate-800 hover:text-indigo-600 transition-colors cursor-pointer">
+                          {candidate.name || '未命名'}
+                        </h3>
+                      </Link>
                       <p className="text-xs text-slate-400 font-mono mt-0.5">{candidate.email || '无邮箱记录'}</p>
                     </div>
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
@@ -456,7 +457,7 @@ export default function DashboardPage() {
                       </span>
                     </div>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>
@@ -496,64 +497,60 @@ export default function DashboardPage() {
                   {paginatedCandidates.map(candidate => {
                     const statusInfo = statusConfig[candidate.status];
                     return (
-                      <Link
-                        key={candidate.id}
-                        href={`/candidates/${candidate.id}`}
-                        className="block"
-                      >
-                        <tr className="hover:bg-slate-50 transition-colors">
-                          <td className="px-4 py-3 text-sm font-medium text-slate-800">
+                      <tr key={candidate.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-4 py-3 text-sm font-medium">
+                          <Link href={`/candidates/${candidate.id}`} className="text-slate-800 hover:text-indigo-600 transition-colors">
                             {candidate.name || '未命名'}
-                          </td>
-                          <td className="px-4 py-3 text-xs text-slate-500 font-mono">
-                            {candidate.email || '无'}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex flex-wrap gap-1">
-                              {candidate.skills.slice(0, 3).map((skill, i) => (
-                                <span key={i} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
-                                  {skill}
-                                </span>
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-slate-500 font-mono">
+                          {candidate.email || '无'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1">
+                            {candidate.skills.slice(0, 3).map((skill, i) => (
+                              <span key={i} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                                {skill}
+                              </span>
+                            ))}
+                            {candidate.skills.length > 3 && (
+                              <span className="text-[10px] bg-slate-50 text-slate-400 px-2 py-0.5 rounded-full">
+                                +{candidate.skills.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
+                            {statusInfo.label}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-slate-400 font-mono">
+                          {new Date(candidate.createdAt).toLocaleDateString('zh-CN')}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={candidate.status}
+                              onChange={(e) => { e.stopPropagation(); handleStatusChange(candidate.id, e.target.value as CandidateStatus); }}
+                              className="text-xs font-semibold px-2.5 py-1.5 bg-slate-50 rounded-lg border-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                            >
+                              {(Object.keys(statusConfig) as CandidateStatus[]).map(status => (
+                                <option key={status} value={status} className="bg-white">
+                                  {statusConfig[status].label}
+                                </option>
                               ))}
-                              {candidate.skills.length > 3 && (
-                                <span className="text-[10px] bg-slate-50 text-slate-400 px-2 py-0.5 rounded-full">
-                                  +{candidate.skills.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${statusInfo.bgColor} ${statusInfo.color}`}>
-                              {statusInfo.label}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-xs text-slate-400 font-mono">
-                            {new Date(candidate.createdAt).toLocaleDateString('zh-CN')}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <select
-                                value={candidate.status}
-                                onChange={(e) => { e.stopPropagation(); handleStatusChange(candidate.id, e.target.value as CandidateStatus); }}
-                                className="text-xs font-semibold px-2.5 py-1.5 bg-slate-50 rounded-lg border-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                              >
-                                {(Object.keys(statusConfig) as CandidateStatus[]).map(status => (
-                                  <option key={status} value={status} className="bg-white">
-                                    {statusConfig[status].label}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); handleDelete(candidate.id, candidate.name); }}
-                                className="text-[10px] px-2 py-1 rounded-md bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
-                                title="删除"
-                              >
-                                删除
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      </Link>
+                            </select>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDelete(candidate.id, candidate.name); }}
+                              className="text-[10px] px-2 py-1 rounded-md bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                              title="删除"
+                            >
+                              删除
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
                     );
                   })}
                 </tbody>

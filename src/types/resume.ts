@@ -37,6 +37,7 @@ export interface MatchScore {
   expScore: number;
   eduScore: number;
   aiComment: string;
+  subScores?: { skills: number; experience: number; education: number };
 }
 
 export interface Candidate {

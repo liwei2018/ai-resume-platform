@@ -1,0 +1,27 @@
+﻿鈻?Next.js 16.2.9 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+鉁?Compiled successfully in 3.9s
+  Running TypeScript ...
+node.exe : Failed to type check.
+所在位置 行:1 字符: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to type check.:String) [], 
+    RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./src/app/jd/page.tsx:263:87
+Type error: Property 'subScores' does not exist on type 'MatchScore'.
+
+  [90m261 |[0m ...
+  [90m262 |[0m ...[32m-[10px] text-slate-400 block"[0m>鎶€鑳藉尮閰?/span>
+[31m[1m>[0m [90m263 |[0m ...[32mt-xl font-bold [0m${getScoreColor(scoreR
+esult.subScores.skills)[32m} font-mono mt-1 block`[0m}>
+  [90m    |[0m                                               [31m[1m^[0m
+  [90m264 |[0m ...res.skills}
+  [90m265 |[0m ...
+  [90m266 |[0m ...
+Next.js build worker exited with code: 1 and signal: null

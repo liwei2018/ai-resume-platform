@@ -260,8 +260,8 @@ export default function JobMatchPage() {
                         <span className="text-lg">🛠️</span>
                       </div>
                       <span className="text-[10px] text-slate-400 block">技能匹配</span>
-                      <span className={`text-xl font-bold ${getScoreColor(scoreResult.subScores.skills)} font-mono mt-1 block`}>
-                        {scoreResult.subScores.skills}
+                      <span className={`text-xl font-bold ${getScoreColor(scoreResult.subScores?.skills || 0)} font-mono mt-1 block`}>
+                        {scoreResult.subScores?.skills || 0}
                       </span>
                     </div>
                     <div className="text-center">
@@ -269,8 +269,8 @@ export default function JobMatchPage() {
                         <span className="text-lg">💼</span>
                       </div>
                       <span className="text-[10px] text-slate-400 block">履历匹配</span>
-                      <span className={`text-xl font-bold ${getScoreColor(scoreResult.subScores.experience)} font-mono mt-1 block`}>
-                        {scoreResult.subScores.experience}
+                      <span className={`text-xl font-bold ${getScoreColor(scoreResult.subScores?.experience || 0)} font-mono mt-1 block`}>
+                        {scoreResult.subScores?.experience || 0}
                       </span>
                     </div>
                     <div className="text-center">
@@ -278,8 +278,8 @@ export default function JobMatchPage() {
                         <span className="text-lg">🎓</span>
                       </div>
                       <span className="text-[10px] text-slate-400 block">学历匹配</span>
-                      <span className={`text-xl font-bold ${getScoreColor(scoreResult.subScores.education)} font-mono mt-1 block`}>
-                        {scoreResult.subScores.education}
+                      <span className={`text-xl font-bold ${getScoreColor(scoreResult.subScores?.education || 0)} font-mono mt-1 block`}>
+                        {scoreResult.subScores?.education || 0}
                       </span>
                     </div>
                   </div>
